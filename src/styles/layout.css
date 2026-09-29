@@ -1,0 +1,257 @@
+/* =========================================================
+   App Layout
+   Sidebar, page header and main content area
+   ========================================================= */
+
+/* ---------- App shell ---------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+
+/* ---------- Sidebar ---------- */
+
+.side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  padding: 18px 12px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+
+
+/* Brand / logo */
+
+.brand {
+  padding: 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.brand span {
+  color: var(--acc);
+}
+
+.brand small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mut);
+}
+
+
+/* Navigation buttons */
+
+.nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  padding: 10px;
+  text-align: left;
+  color: var(--mut);
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+
+.nav:hover {
+  background: var(--panel2);
+  color: var(--txt);
+  transform: translateX(3px);
+}
+
+/* Highlight the page that is currently open */
+
+.nav[aria-current=page] {
+  background: var(--panel2);
+  color: var(--txt);
+  box-shadow: inset 3px 0 var(--acc);
+}
+
+.nav i {
+  font-style: normal;
+  font-size: 18px;
+}
+
+.nav span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nav small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--mut);
+}
+
+
+/* Sidebar actions (new task, undo / redo / export / import) */
+
+.sideact {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+}
+
+.mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.mini button {
+  padding: 5px 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--mut);
+}
+
+.mini button:hover:not(:disabled) {
+  color: var(--txt);
+}
+
+/* The first two buttons (undo / redo) use larger arrow glyphs */
+
+.mini button:nth-child(-n + 2) {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+
+/* ---------- Main content area ---------- */
+
+.content {
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 22px 22px 0;
+  overflow: hidden;
+}
+
+/* Notice banner (e.g. import result) */
+
+.notice {
+  padding: 8px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  animation: fade 0.3s;
+}
+
+
+/* One page; remounted on navigation so the animation replays */
+
+.view {
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  animation: rise 0.45s both;
+}
+
+/* Scrollable body of a page (below the header) */
+
+.vbody {
+  flex: 1;
+  min-height: 0;
+
+  padding: 2px 6px 28px 2px;
+  margin-right: -6px;
+  overflow-y: auto;
+}
+
+
+/* ---------- Page header ---------- */
+
+.vhead {
+  flex: none;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.vhead h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.4px;
+}
+
+.vhead p {
+  margin: 0;
+  color: var(--mut);
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+
+  /* Sidebar collapses into a top bar */
+
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .side {
+    position: static;
+    height: auto;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    padding: 12px;
+  }
+
+  .nav {
+    flex: none;
+  }
+
+  .nav small {
+    display: none;
+  }
+
+  .sideact {
+    margin: 0 0 0 auto;
+    display: flex;
+  }
+
+  .mini {
+    grid-template-columns: repeat(4, 40px);
+  }
+
+  .content {
+    padding: 14px 14px 0;
+  }
+}

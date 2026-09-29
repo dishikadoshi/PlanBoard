@@ -1,0 +1,407 @@
+/* =========================================================
+   Modals
+   Popup shell, task form, task details and dependency picker
+   ========================================================= */
+
+/* ---------- Backdrop & dialog shell ---------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  display: grid;
+  place-items: center;
+
+  padding: 16px;
+  background: rgba(6, 8, 13, 0.7);
+  backdrop-filter: blur(4px);
+
+  animation: fade 0.2s;
+}
+
+.modal {
+  width: min(640px, 100%);
+  max-height: 92vh;
+
+  padding: 22px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: auto;
+
+  animation: popin 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+/* Width variants */
+
+.detail {
+  width: min(560px, 100%);
+}
+
+.confirm {
+  width: min(420px, 100%);
+}
+
+/* Cancel / Save button row */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+
+/* ---------- Form fields ---------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+/* Two-column (responsive) grid of short fields */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0 12px;
+}
+
+/* Validation error message */
+
+em {
+  font-size: 12px;
+  font-style: normal;
+  color: #e2909e;
+}
+
+[aria-invalid=true] {
+  border-color: var(--red);
+}
+
+fieldset {
+  margin: 0 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+legend {
+  font-size: 12px;
+  color: var(--mut);
+}
+
+
+/* ---------- Task details modal ---------- */
+
+/* Title + close button */
+
+.dhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.dhead h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Priority / blocked / overdue chips */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin: 8px 0;
+}
+
+.desc {
+  margin: 4px 0 12px;
+  color: var(--mut);
+}
+
+/* Key / value grid (assignee, status, dates, ...) */
+
+.info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+
+  margin: 0 0 14px;
+}
+
+.info dt {
+  font-size: 11px;
+  color: var(--mut);
+}
+
+.info dd {
+  margin: 0;
+}
+
+.info .wide {
+  grid-column: 1 / -1;
+}
+
+.info select {
+  padding: 4px 8px;
+}
+
+
+/* Prerequisites (left) and unblocked tasks (right) */
+
+.dcols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  margin-bottom: 14px;
+}
+
+.dcols h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+/* Sub-heading for the indirect list */
+
+.dcols h3.sub {
+  margin-top: 12px;
+}
+
+.dcols ul {
+  display: grid;
+  gap: 4px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Indirect lists are visually quieter */
+
+.dcols ul.soft {
+  opacity: 0.75;
+}
+
+/* Each row: clickable title + status pill */
+
+.dcols li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dcols li button {
+  flex: 1;
+  min-width: 0;
+
+  padding: 5px 8px;
+  text-align: left;
+  font-size: 12.5px;
+}
+
+
+/* ---------- "Why is this blocked?" banner ---------- */
+
+.why {
+  margin: 8px 0;
+  padding: 8px 10px;
+
+  font-size: 12.5px;
+  border-radius: 9px;
+}
+
+.why.bad {
+  color: #e9a4b0;
+  background: rgba(209, 105, 122, 0.12);
+}
+
+.why.ok {
+  color: #8fd0b4;
+  background: rgba(90, 169, 135, 0.12);
+}
+
+.why.neutral {
+  color: var(--mut);
+  background: var(--panel2);
+}
+
+.why ul {
+  display: grid;
+  gap: 4px;
+
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.why li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.why li button {
+  flex: 1;
+  padding: 3px 8px;
+  text-align: left;
+  font-size: 12.5px;
+}
+
+
+/* ---------- Dependency selector ---------- */
+
+.depsel {
+  margin: 0 0 12px;
+  padding: 8px 12px 12px;
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.depsel legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.depsel .help {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+.depsel .why {
+  margin: 10px 0 0;
+}
+
+/* Scrollable area holding the "Selected" and "Available" lists */
+
+.dscroll {
+  max-height: 230px;
+
+  display: grid;
+  gap: 12px;
+
+  padding-right: 4px;
+  overflow: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #2e374b transparent;
+}
+
+.dgroup h4 {
+  margin: 0 0 5px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+.dgroup ul {
+  display: grid;
+  gap: 4px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+
+/* One selectable prerequisite row */
+
+.drow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 9px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+
+.drow:hover {
+  border-color: #3a4763;
+  transform: translateX(2px);
+}
+
+/* Ticked */
+
+.drow.on {
+  border-color: var(--acc);
+}
+
+/* Disabled because it would create a circular dependency */
+
+.drow.off {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.drow input {
+  width: auto;
+}
+
+.drow .dt {
+  flex: 1;
+  font-size: 13px;
+}
+
+.drow .reason {
+  color: var(--red);
+}
+
+
+/* Small status pill: "● In Progress" */
+
+.spill {
+  flex: none;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--mut);
+  white-space: nowrap;
+
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+.spill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+
+  .dcols {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,247 @@
+/* =========================================================
+   Dependency Map & Insights
+   ========================================================= */
+
+/* ---------- Map container ---------- */
+
+.mapscroll {
+  overflow-x: auto;
+}
+
+.mapinner {
+  position: relative;
+  min-width: max-content;
+
+  display: flex;
+  gap: 90px;
+
+  padding: 4px 4px 12px;
+}
+
+/* Short helper text above the map */
+
+.hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+
+/* ---------- Wires (SVG lines between tasks) ---------- */
+
+.wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+  pointer-events: none;
+}
+
+.wire {
+  fill: none;
+  stroke: #3a4459;
+  stroke-width: 1.6;
+
+  transition:
+    opacity 0.2s,
+    stroke-width 0.2s;
+}
+
+/* Wires that connect two unfinished tasks are red and animated */
+
+.wire.hot {
+  stroke: var(--red);
+  stroke-dasharray: 5 4;
+  animation: dash 1.2s linear infinite;
+}
+
+
+/* ---------- Tracing a task (hover / focus) ---------- */
+
+/* Direct links: bright */
+
+.wire.direct {
+  stroke-width: 2.6;
+}
+
+/* Indirect chain: faint */
+
+.wire.indirect {
+  opacity: 0.5;
+}
+
+/* Everything else: almost invisible */
+
+.wire.dim {
+  opacity: 0.1;
+}
+
+
+/* ---------- Phases (columns) ---------- */
+
+.phase {
+  position: relative;
+  z-index: 1;
+  width: 230px;
+
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.phase h3 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.phase h3 small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--mut);
+}
+
+
+/* ---------- Task nodes ---------- */
+
+.node {
+  display: block;
+  width: 100%;
+
+  padding: 10px 12px;
+  text-align: left;
+
+  animation: fade 0.5s both;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    border-color 0.2s;
+}
+
+.node b {
+  display: block;
+  font-size: 13px;
+}
+
+.node span {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+
+.node.blocked {
+  border-color: rgba(209, 105, 122, 0.55);
+}
+
+/* "Blocked by N" note */
+
+.node em {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: #e2909e;
+}
+
+/* Node dimmed while another task is being traced */
+
+.node.dim {
+  opacity: 0.35;
+}
+
+/* Status marker (✓ 🔒 ⚠ ●) in front of the title */
+
+.mk {
+  margin-right: 6px;
+  font-style: normal;
+}
+
+
+/* ---------- Insights panel ---------- */
+
+.insights {
+  margin-top: 14px;
+}
+
+/* Four small number tiles */
+
+.istats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  margin-bottom: 18px;
+}
+
+.istats div {
+  padding: 10px 12px;
+  background: var(--panel2);
+  border-radius: 10px;
+}
+
+.istats b {
+  display: block;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.istats span {
+  font-size: 12px;
+  color: var(--mut);
+}
+
+
+/* Two columns: blocked tasks + legend */
+
+.icols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.icols h3 {
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+
+  font-size: 12px;
+  color: var(--mut);
+  border-bottom: 1px solid var(--line);
+}
+
+.icols ul {
+  display: grid;
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icols li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.insights .link {
+  text-align: left;
+  text-decoration: none;
+}
+
+.insights .link:hover {
+  text-decoration: underline;
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+
+  .istats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .icols {
+    grid-template-columns: 1fr;
+  }
+}

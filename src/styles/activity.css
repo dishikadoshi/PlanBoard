@@ -1,0 +1,211 @@
+/* =========================================================
+   Activity & Audit Log
+   ========================================================= */
+
+/* ---------- Day / Date heading ---------- */
+
+.days h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 11px;
+  color: var(--mut);
+  margin: 0 0 8px;
+}
+
+
+/* ---------- Activity feed ---------- */
+
+.feed {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+
+/* Activity list */
+
+.feed ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Individual activity item */
+
+.feed li {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line);
+
+  animation: rise 0.4s both;
+}
+
+
+/* Activity icon */
+
+.feed li i {
+  font-style: normal;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+
+  background: var(--panel2);
+  color: var(--acc);
+
+  display: grid;
+  place-items: center;
+}
+
+
+/* Activity title */
+
+.feed li b {
+  display: block;
+  font-size: 13.5px;
+}
+
+
+/* Activity description */
+
+.feed li p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--mut);
+}
+
+
+/* Activity detail / highlighted text */
+
+.feed li .det {
+  color: var(--txt);
+}
+
+
+/* Activity timestamp */
+
+.feed time {
+  color: var(--mut);
+  font-size: 12px;
+}
+
+
+/* ---------- Activity header ---------- */
+
+.fhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+
+/* Page title */
+
+.fhead h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.2px;
+}
+
+
+/* Page subtitle */
+
+.fhead p {
+  margin: 2px 0 0;
+  color: var(--mut);
+  font-size: 13px;
+}
+
+
+/* Number of activity events */
+
+.fhead .count {
+  margin: 4px 0 0;
+  white-space: nowrap;
+}
+
+
+/* ---------- Activity filters / toolbar ---------- */
+
+.ftool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+
+  margin: 16px 0 18px;
+  padding: 12px 0;
+
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+
+/* Search / text input */
+
+.ftool input {
+  flex: 1;
+  min-width: 180px;
+}
+
+
+/* Dropdowns */
+
+.ftool select {
+  width: auto;
+}
+
+
+/* Filter / event count */
+
+.count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+
+/* ---------- Activity sections ---------- */
+
+/* Add spacing between different date groups */
+
+.days > div + div {
+  margin-top: 18px;
+}
+
+
+/* Scrollable activity area */
+
+.days {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+
+  padding-right: 8px;
+  margin-right: -8px;
+}
+
+
+/* Keyboard focus state */
+
+.days:focus-visible {
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+
+/* ---------- Feed header & toolbar behavior ---------- */
+
+/* Keep header and toolbar fixed while activity list scrolls */
+
+.feed .fhead,
+.feed .ftool {
+  flex: none;
+}

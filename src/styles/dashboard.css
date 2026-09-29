@@ -1,0 +1,372 @@
+/* =========================================================
+   Dashboard
+   Metric tiles, charts and the "Action Required" panel
+   ========================================================= */
+
+/* ---------- Page layout ---------- */
+
+.dash {
+  display: grid;
+  gap: 14px;
+}
+
+
+/* ---------- Headline metric tiles ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stat {
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  animation: rise 0.5s both;
+  transition:
+    transform 0.25s,
+    border-color 0.25s;
+}
+
+.stat:hover {
+  border-color: #33405a;
+  transform: translateY(-3px);
+}
+
+.stat span {
+  font-size: 12px;
+  color: var(--mut);
+}
+
+.stat b {
+  display: block;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+
+/* "Complete %" tile shows the number in accent colour plus a bar */
+
+.stat.pct b {
+  color: var(--acc);
+}
+
+.stat.pct .progress {
+  height: 6px;
+  margin-top: 8px;
+}
+
+
+/* ---------- Progress bar ---------- */
+
+.progress {
+  height: 8px;
+  background: var(--panel2);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.progress div {
+  height: 100%;
+  background: var(--acc);
+  border-radius: 9px;
+
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+
+/* ---------- Chart row ---------- */
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.charts .panel {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ---------- Donut chart: Tasks by Status ---------- */
+
+.donutwrap {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.donut {
+  flex: none;
+  width: 136px;
+  height: 136px;
+}
+
+/* Grey track behind the coloured arcs */
+
+.donut .ring {
+  fill: none;
+  stroke: var(--panel2);
+  stroke-width: 14;
+}
+
+.donut .seg {
+  fill: none;
+  stroke-width: 14;
+
+  transition:
+    stroke-dasharray 0.6s,
+    stroke-dashoffset 0.6s;
+}
+
+.donut .s0 { stroke: var(--s0); }
+.donut .s1 { stroke: var(--s1); }
+.donut .s2 { stroke: var(--s2); }
+.donut .s3 { stroke: var(--s3); }
+.donut .s4 { stroke: var(--s4); }
+
+/* Centre label: total + "tasks" */
+
+.donut .dn {
+  fill: var(--txt);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.donut .dl {
+  fill: var(--mut);
+  font-size: 9px;
+}
+
+
+/* Legend next to the donut */
+
+.legend {
+  min-width: 120px;
+
+  display: grid;
+  gap: 7px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.legend li {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+
+/* ---------- Vertical bars: Estimated Effort ---------- */
+
+.vbars {
+  height: 170px;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.vbars > div {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  font-size: 12px;
+  color: var(--mut);
+}
+
+.vbars i {
+  display: block;
+  width: 100%;
+  min-height: 3px;
+
+  border-radius: 6px 6px 0 0;
+  transform-origin: bottom;
+
+  animation: growy 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition: height 0.6s;
+}
+
+.vbars b {
+  font-size: 13px;
+  color: var(--txt);
+}
+
+.vbars span {
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+
+/* ---------- Horizontal bars: Dependency Impact ---------- */
+
+.hbars {
+  display: grid;
+  gap: 11px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hbars li {
+  display: grid;
+  grid-template-columns: 78px 1fr 24px;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 13px;
+}
+
+/* Wider label column for long task titles */
+
+.hbars.wide li {
+  grid-template-columns: 132px 1fr 24px;
+}
+
+.hbars.wide li > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bar track */
+
+.hbars li > div {
+  height: 14px;
+  display: flex;
+
+  background: var(--panel2);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+/* Bar fill */
+
+.hbars i {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+
+  animation: grow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition: width 0.6s;
+}
+
+.hbars b {
+  text-align: right;
+}
+
+.v-acc {
+  background: var(--acc);
+}
+
+
+/* ---------- "Action Required" panel ---------- */
+
+.action ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.action li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 14px;
+  font-size: 13px;
+
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.action li b {
+  font-size: 16px;
+}
+
+/* Blocked */
+
+.action li.red {
+  background: rgba(209, 105, 122, 0.1);
+  border-color: rgba(209, 105, 122, 0.5);
+}
+
+.action li.red b {
+  color: #e2909e;
+}
+
+/* Overdue */
+
+.action li.amber {
+  background: rgba(201, 160, 90, 0.1);
+  border-color: rgba(201, 160, 90, 0.5);
+}
+
+.action li.amber b {
+  color: #dcb97c;
+}
+
+/* Critical */
+
+.action li.crit {
+  background: rgba(209, 105, 122, 0.1);
+  border-color: rgba(209, 105, 122, 0.5);
+}
+
+.action li.crit i {
+  color: var(--red);
+}
+
+/* Nothing to act on: fade the pill out (declared last so it wins) */
+
+.action li.zero {
+  opacity: 0.45;
+  background: var(--panel2);
+  border-color: var(--line);
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1000px) {
+
+  .charts {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

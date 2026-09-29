@@ -1,0 +1,422 @@
+/* =========================================================
+   Global Styles
+   Design tokens, resets, keyframes and shared primitives
+   ========================================================= */
+
+/* ---------- Design tokens ---------- */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0d1017;
+  --panel: #131822;
+  --panel2: #181e2b;
+  --line: #252d3d;
+
+  /* Text */
+  --txt: #e5e8ef;
+  --mut: #8b94a7;
+
+  /* Brand accent */
+  --acc: #7583e6;
+
+  /* Status colours (Backlog → Done) */
+  --s0: #5f687c;
+  --s1: #5d86c4;
+  --s2: #b8924f;
+  --s3: #8479bd;
+  --s4: #4f9a7a;
+
+  /* Semantic colours */
+  --red: #d1697a;
+  --amber: #c9a05a;
+  --green: #5aa987;
+}
+
+
+/* ---------- Resets & base elements ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font: 14px/1.5 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+small {
+  color: var(--mut);
+}
+
+nav {
+  display: grid;
+  gap: 4px;
+}
+
+/* Keyboard focus ring for every interactive element */
+
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+
+/* ---------- Keyframe animations ---------- */
+
+/* Slide up while fading in */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Plain fade in */
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Horizontal bar growing from the left */
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Vertical bar growing from the bottom */
+
+@keyframes growy {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* Number "pop" whenever a metric changes */
+
+@keyframes pop {
+  from {
+    transform: scale(1.35);
+    opacity: 0.4;
+  }
+}
+
+/* Modal entrance */
+
+@keyframes popin {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(14px);
+  }
+}
+
+/* Marching-ants effect on unfinished dependency wires */
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* ---------- Buttons ---------- */
+
+button {
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 12px;
+  background: var(--panel2);
+
+  transition:
+    transform 0.15s,
+    background 0.2s,
+    border-color 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: #1f2636;
+  border-color: #33405a;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+/* Main call-to-action button */
+
+.primary {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: #fff;
+  font-weight: 600;
+}
+
+.primary:hover:not(:disabled) {
+  background: #8794ee;
+  border-color: #8794ee;
+}
+
+
+/* Button that looks like a text link */
+
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--acc);
+  text-decoration: underline;
+}
+
+
+/* Small icon-only button (e.g. close ✕) */
+
+.icon {
+  padding: 5px 9px;
+}
+
+
+/* Destructive action: turns red on hover */
+
+.danger:hover:not(:disabled) {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+
+/* ---------- Form controls ---------- */
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 7px 9px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+
+  transition: border-color 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--acc);
+}
+
+select option {
+  background: #181e2b;
+}
+
+
+/* ---------- Panels (cards used across every page) ---------- */
+
+.panel {
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  animation: rise 0.5s both;
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.panel h2 small {
+  margin-left: 6px;
+  font-weight: 400;
+  color: var(--mut);
+  white-space: nowrap;
+}
+
+
+/* ---------- Small shared pieces ---------- */
+
+/* Screen-reader-only text (kept in the layout, hidden visually) */
+
+.sr {
+  position: absolute;
+  left: -9999px;
+}
+
+
+/* Placeholder message for empty lists */
+
+.empty {
+  text-align: center;
+  padding: 22px;
+  color: var(--mut);
+
+  animation: fade 0.4s;
+}
+
+.empty.tight {
+  padding: 8px 0 14px;
+}
+
+
+/* Muted secondary text */
+
+.muted {
+  margin: 0;
+  color: var(--mut);
+}
+
+
+/* Applied to numbers so they animate when remounted */
+
+.pop {
+  animation: pop 0.35s;
+}
+
+
+/* Status colour helpers: dots, bars, legend swatches */
+
+.s0 { background: var(--s0); }
+.s1 { background: var(--s1); }
+.s2 { background: var(--s2); }
+.s3 { background: var(--s3); }
+.s4 { background: var(--s4); }
+
+
+/* Coloured numbers inside tone-tagged tiles */
+
+.green b { color: var(--green); }
+.amber b { color: var(--amber); }
+.red b   { color: var(--red); }
+
+
+/* Priority chip */
+
+.pri {
+  padding: 0 6px;
+  font-size: 10px;
+  color: var(--mut);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+
+/* Coloured state badges (Blocked / Overdue) */
+
+.badge {
+  padding: 1px 7px;
+  font-size: 10.5px;
+  color: var(--mut);
+  background: var(--panel);
+  border-radius: 6px;
+}
+
+.badge.red {
+  color: #e2909e;
+  background: rgba(209, 105, 122, 0.15);
+}
+
+.badge.amber {
+  color: #dcb97c;
+  background: rgba(201, 160, 90, 0.15);
+}
+
+
+/* Round assignee avatar showing the first letter of the name */
+
+.avatar {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+
+  font-size: 11px;
+  font-weight: 600;
+  color: #b9c3f5;
+  background: #26304a;
+  border-radius: 50%;
+}
+
+
+/* ---------- Scrollbars ---------- */
+
+:root,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2e374b transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e374b;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #414e69;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+
+  /* Navigation becomes a horizontal, scrollable strip */
+
+  nav {
+    display: flex;
+    overflow-x: auto;
+    order: 3;
+    width: 100%;
+  }
+}
