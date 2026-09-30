@@ -209,8 +209,15 @@
   border-radius: 6px 6px 0 0;
   transform-origin: bottom;
 
-  animation: growy 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  transition: height 0.6s;
+  /* Collapsed until the panel scrolls into view (see .inview below) */
+  transform: scaleY(0);
+  transition:
+    height 0.6s,
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.inview .vbars i {
+  transform: scaleY(1);
 }
 
 .vbars b {
@@ -274,8 +281,15 @@
   height: 100%;
   transform-origin: left;
 
-  animation: grow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  transition: width 0.6s;
+  /* Collapsed until the panel scrolls into view (see .inview below) */
+  transform: scaleX(0);
+  transition:
+    width 0.6s,
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.inview .hbars i {
+  transform: scaleX(1);
 }
 
 .hbars b {
