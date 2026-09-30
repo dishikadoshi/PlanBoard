@@ -1,112 +1,78 @@
-/* =========================================================
-   Activity log entries
-   Builds the human-readable entries shown on the Activity
-   page. The reducer decides WHAT happened; this file decides
-   how it is worded.
-   ========================================================= */
-
-import { newId } from '../utils/idUtils';
-
-const ARROW = ' → ';
-
-// Words used when an undo / redo describes the change it reverts
-const CHANGE_NOUNS = {
-  created: 'task creation',
-  updated: 'task update',
-  moved: 'status change',
-  deleted: 'task deletion',
-  dependency: 'dependency change',
-  import: 'import',
-};
-
-
-/* ---------- Building blocks ---------- */
+import { useMemo, useState } from 'react';
+import { ACTIVITY_TYPE_LABELS } from '../../app/constants';
+import { normaliseEntry, filterActivity, groupByDay } from '../../utils/activityUtils';
+import ActivityItem from './ActivityItem';
 
 /**
- * One structured entry per event.
- *   type   – picks the icon and the filter category
- *   title  – what it happened to (usually the task title)
- *   text   – short headline, e.g. "Status changed"
- *   detail – extra line, e.g. "To Do → In Progress"
+ * Activity & Audit Log page: search + type filter, entries grouped by day.
+ * Carries its own header inside its card (App skips the shared PageHeader).
+ *
+ * Props:
+ *   activity – newest-first list of log entries
  */
-export const createLogEntry = (type, title, text, detail = '') => ({
-  id: newId(),
-  at: new Date().toISOString(),
-  type,
-  title,
-  text,
-  detail,
-});
+export default function ActivityLog({ activity }) {
+  const [query, setQuery] = useState('');
+  const [type, setType] = useState('');
 
-/** Title of a task by id, or a friendly fallback if it no longer exists. */
-const titleOf = (tasks, id) =>
-  tasks.find((task) => task.id === id)?.title ?? 'a removed task';
+  const entries = useMemo(() => activity.map(normaliseEntry), [activity]);
+  const shown = filterActivity(entries, { type, query });
+  const entriesByDay = groupByDay(shown);
 
-/** "A → B" becomes "B → A" (used to describe an undone change). */
-const flipArrow = (detail) =>
-  detail.includes(ARROW) ? detail.split(ARROW).reverse().join(ARROW) : detail;
+  return (
+    <section className="panel feed">
+      {/* Header: title + event count */}
+      <div className="fhead">
+        <div>
+          <h1>Activity &amp; Audit Log</h1>
+          <p>Track changes, dependencies and project history</p>
+        </div>
 
+        <span className="count" aria-live="polite">
+          {shown.length} {shown.length === 1 ? 'event' : 'events'}
+        </span>
+      </div>
 
-/* ---------- Task events ---------- */
+      {/* Toolbar: search + type filter */}
+      <div className="ftool">
+        <input
+          type="search"
+          aria-label="Search activity"
+          placeholder="Search activity…"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
 
-export const taskCreatedEntry = (task) =>
-  createLogEntry('created', task.title, 'Task created', `Assigned to ${task.assignee}`);
+        <select
+          aria-label="Filter by event type"
+          value={type}
+          onChange={(event) => setType(event.target.value)}
+        >
+          <option value="">All types</option>
 
-export const taskDeletedEntry = (task) =>
-  createLogEntry('deleted', task.title, 'Task deleted');
+          {Object.entries(ACTIVITY_TYPE_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </div>
 
-export const statusChangedEntry = (task, fromStatus, toStatus) =>
-  createLogEntry('moved', task.title, 'Status changed', `${fromStatus}${ARROW}${toStatus}`);
+      {!shown.length && <p className="muted">No events match your search.</p>}
 
-export const fieldsUpdatedEntry = (task, changedFields) =>
-  createLogEntry('updated', task.title, 'Task updated', `Changed ${changedFields.join(', ')}`);
+      {/* Scrollable list, one section per day */}
+      <div className="days" tabIndex={0} aria-label="Activity events">
+        {Object.entries(entriesByDay).map(([dayHeading, dayEntries]) => (
+          <div key={dayHeading}>
+            <h2>{dayHeading}</h2>
 
-export const importedEntry = (taskCount) =>
-  createLogEntry('import', 'Project', 'Imported from JSON', `${taskCount} tasks`);
-
-export const workspaceCreatedEntry = () =>
-  createLogEntry('created', 'Workspace', 'Workspace created', 'Demo data loaded');
-
-
-/* ---------- Dependency events ---------- */
-
-export const dependencyAddedEntry = (task, allTasks, depId) =>
-  createLogEntry(
-    'dependency',
-    task.title,
-    'Dependency added',
-    `Depends on “${titleOf(allTasks, depId)}”`
+            <ol>
+              {dayEntries.map((entry, index) => (
+                <ActivityItem key={entry.id} entry={entry} index={index} />
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </section>
   );
-
-export const dependencyRemovedEntry = (task, allTasks, depId) =>
-  createLogEntry(
-    'dependency',
-    task.title,
-    'Dependency removed',
-    `No longer depends on “${titleOf(allTasks, depId)}”`
-  );
-
-
-/* ---------- Undo / redo ---------- */
-
-/** Entries describing that `entries` were undone. */
-export const revertedEntries = (entries) =>
-  entries.map((entry) =>
-    createLogEntry(
-      'reverted',
-      entry.title,
-      `Reverted ${CHANGE_NOUNS[entry.type] || 'change'}`,
-      flipArrow(entry.detail)
-    )
-  );
-
-/** Entries describing that `entries` were re-applied. */
-export const reappliedEntries = (entries) =>
-  entries.map((entry) =>
-    createLogEntry(
-      'redone',
-      entry.title,
-      `Re-applied ${CHANGE_NOUNS[entry.type] || 'change'}`,
-      entry.detail
-    )
-  );
+}
