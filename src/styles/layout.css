@@ -216,16 +216,15 @@
 
 @media (max-width: 860px) {
 
-  /* The page itself scrolls (with a sticky header) instead of every panel
-     scrolling on its own. `clip` keeps position: sticky working. */
+  /* The app fills the screen: top bar, tabs and page heading stay put and
+     only the area below them scrolls (same idea as the desktop layout). */
 
   .shell {
-    display: block;
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow: visible;
-    overflow-x: clip;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
 
 
@@ -235,9 +234,9 @@
      ----------------------------------------------------------------------- */
 
   .side {
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 8;
+    flex: none;
 
     height: auto;
     min-width: 0;
@@ -355,32 +354,43 @@
   }
 
 
-  /* ----- Content flows in the page ----- */
+  /* ----- Content: heading fixed, body scrolls ----- */
 
   .content {
-    display: block;
-    padding: 16px 14px calc(28px + env(safe-area-inset-bottom, 0px));
-    overflow: visible;
+    flex: 1;
+    padding: 12px 14px env(safe-area-inset-bottom, 0px);
   }
 
-  .view {
-    display: block;
-    animation: fade 0.3s both;
+  .notice {
+    flex: none;
+    margin-bottom: 10px;
   }
 
-  .vbody {
-    padding: 0;
-    margin-right: 0;
-    overflow: visible;
-  }
+  /* Page heading (title + subtitle) never scrolls away */
 
   .vhead {
     align-items: flex-start;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .vhead h1 {
-    font-size: 22px;
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .vhead p {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  /* The scrolling part of Dashboard / Dependency Map */
+
+  .vbody {
+    padding: 2px 0 24px;
+    margin-right: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* "New Task" already lives in the top bar */
@@ -449,5 +459,28 @@
 
   .mini button {
     width: 27px;
+  }
+}
+
+
+/* ---------- Landscape phones (very little height) ---------- */
+
+@media (max-width: 860px) and (max-height: 500px) {
+
+  .side {
+    padding-top: 6px;
+    gap: 4px 10px;
+  }
+
+  .nav {
+    padding: 7px 12px;
+  }
+
+  .vhead p {
+    display: none;
+  }
+
+  .vhead {
+    margin-bottom: 6px;
   }
 }
