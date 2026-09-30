@@ -242,6 +242,109 @@ select option {
 }
 
 
+/* ---------- Custom dropdown (see components/common/Dropdown.jsx) ---------- */
+
+/* Trigger button: looks like the other form controls */
+
+.dd-btn {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 7px 9px;
+  text-align: left;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.dd-btn:focus-visible,
+.dd-btn[aria-expanded='true'] {
+  border-color: var(--acc);
+}
+
+.dd-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Chevron drawn with borders (no icon font needed) */
+
+.dd-caret {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+
+  border-right: 2px solid var(--mut);
+  border-bottom: 2px solid var(--mut);
+  transform: rotate(45deg);
+}
+
+/* The menu itself: floats above everything, in <body> */
+
+.dd-menu {
+  position: fixed;
+  z-index: 1000;
+
+  max-height: min(280px, 60vh);
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+
+  list-style: none;
+  font-size: 13px;
+  background: #181e2b;
+  border: 1px solid #33405a;
+  border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+
+  animation: fade 0.12s backwards;
+}
+
+.dd-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 7px 10px;
+  color: var(--txt);
+  white-space: nowrap;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.dd-opt.active {
+  background: rgba(117, 131, 230, 0.22);
+}
+
+.dd-opt[aria-selected='true'] {
+  color: var(--acc);
+  font-weight: 600;
+}
+
+/* Options the user may not pick (e.g. a blocked task cannot be started) */
+
+.dd-opt[aria-disabled='true'] {
+  color: var(--mut);
+  cursor: not-allowed;
+}
+
+.dd-opt[aria-disabled='true'].active {
+  background: transparent;
+}
+
+.dd-opt small {
+  font-size: 11px;
+}
+
+
 /* ---------- Panels (cards used across every page) ---------- */
 
 .panel {
@@ -250,7 +353,7 @@ select option {
   border: 1px solid var(--line);
   border-radius: 14px;
 
-  animation: rise 0.5s both;
+  animation: rise 0.5s backwards;
 }
 
 .panel h2 {

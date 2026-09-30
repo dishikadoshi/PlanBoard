@@ -1,17 +1,14 @@
 import { TEAM, PRIORITIES, STATUSES, NO_FILTERS } from '../../app/constants';
+import Dropdown from '../common/Dropdown';
 
 /** One labelled dropdown: an "All" choice followed by the given options. */
 function FilterSelect({ label, value, options, onChange }) {
+  const choices = [{ value: '', label: 'All' }, ...options];
+
   return (
     <label>
       {label}
-      <select value={value} onChange={onChange}>
-        <option value="">All</option>
-
-        {options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
-      </select>
+      <Dropdown value={value} options={choices} onChange={onChange} />
     </label>
   );
 }
@@ -27,8 +24,7 @@ function FilterSelect({ label, value, options, onChange }) {
  */
 export default function BoardFilters({ filters, setFilters, tags, active }) {
   // Builds a change handler that updates just one filter key
-  const updateFilter = (key) => (event) =>
-    setFilters({ ...filters, [key]: event.target.value });
+  const updateFilter = (key) => (value) => setFilters({ ...filters, [key]: value });
 
   return (
     <section className="filters" aria-label="Search and filters">
@@ -38,7 +34,7 @@ export default function BoardFilters({ filters, setFilters, tags, active }) {
           type="search"
           placeholder="Search…"
           value={filters.q}
-          onChange={updateFilter('q')}
+          onChange={(event) => updateFilter('q')(event.target.value)}
         />
       </label>
 

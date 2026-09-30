@@ -178,7 +178,7 @@
   border-radius: 10px;
   cursor: pointer;
 
-  animation: rise 0.45s both;
+  animation: rise 0.45s backwards;
   transition:
     transform 0.2s,
     box-shadow 0.2s,
@@ -193,6 +193,13 @@
 
 .card:active {
   cursor: grabbing;
+}
+
+/* Keep the card still while its status dropdown is open (the native popup
+   is drawn over the page and glitches if the card moves underneath it) */
+
+.card:focus-within {
+  transform: none;
 }
 
 /* Blocked cards get a subtle red diagonal stripe */
@@ -301,6 +308,10 @@
   padding: 3px 8px;
   font-size: 12px;
   cursor: pointer;
+}
+
+.cstatus .dd-value {
+  margin-right: 4px;
 }
 
 

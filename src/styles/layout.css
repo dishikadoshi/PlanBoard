@@ -212,60 +212,26 @@
 }
 
 
-/* ---------- Responsive (tablet + phone) ---------- */
+/* ---------- Responsive ---------- */
 
 @media (max-width: 860px) {
 
-  /* The page scrolls normally instead of each panel scrolling on its own */
+  /* Sidebar collapses into a top bar */
 
   .shell {
-    /* minmax(0, …) stops wide content from stretching the column past the screen */
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 1fr);
-
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow: visible;
   }
-
-
-  /* Sidebar becomes a compact top bar:  [ brand ......... undo redo exp imp ]
-                                         [ page tabs (swipe sideways)        ] */
 
   .side {
     position: static;
     height: auto;
-    min-width: 0;
 
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "brand tools"
-      "tabs  tabs";
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px 12px;
 
-    padding: 12px 14px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .brand {
-    grid-area: brand;
-    padding: 0;
-  }
-
-  .brand small {
-    display: none;
-  }
-
-  nav {
-    grid-area: tabs;
-
-    display: flex;
-    overflow-x: auto;
-    padding-bottom: 2px;
+    padding: 12px;
   }
 
   .nav {
@@ -277,121 +243,15 @@
   }
 
   .sideact {
-    grid-area: tools;
-    margin: 0;
+    margin: 0 0 0 auto;
     display: flex;
   }
 
   .mini {
-    grid-template-columns: repeat(4, 38px);
-  }
-
-
-  /* "New Task" floats bottom-right so it is always one tap away */
-
-  .sideact .primary {
-    position: fixed;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    z-index: 5;
-
-    padding: 12px 18px;
-    border-radius: 999px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-  }
-
-  /* The board header button would duplicate it */
-
-  .vhead .primary {
-    display: none;
-  }
-
-
-  /* Content flows in the page instead of a fixed-height box */
-
-  .content {
-    padding: 16px 14px 88px;
-    overflow: visible;
-  }
-
-  .view {
-    flex: none;
-    min-height: 0;
-  }
-
-  .vbody {
-    padding: 0;
-    margin-right: 0;
-    overflow: visible;
-  }
-
-  .vhead {
-    align-items: flex-start;
-    margin-bottom: 14px;
-  }
-
-  .vhead h1 {
-    font-size: 21px;
-  }
-}
-
-
-/* ---------- Responsive (phones) ---------- */
-
-@media (max-width: 600px) {
-
-  /* Four equal tabs with the icon above the label, so none is cut off */
-
-  nav {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 4px;
-    overflow: visible;
-  }
-
-  .nav {
-    flex-direction: column;
-    gap: 3px;
-
-    padding: 8px 2px;
-    text-align: center;
-  }
-
-  .nav:hover {
-    transform: none;
-  }
-
-  .nav span {
-    font-size: 11px;
-    line-height: 1.2;
-  }
-
-  /* Active tab is marked along the bottom instead of the left edge */
-
-  .nav[aria-current=page] {
-    box-shadow: inset 0 -3px var(--acc);
-  }
-}
-
-
-/* ---------- Responsive (small phones) ---------- */
-
-@media (max-width: 400px) {
-
-  .brand {
-    font-size: 19px;
-  }
-
-  .mini {
-    grid-template-columns: repeat(4, 34px);
-    gap: 4px;
-  }
-
-  .side {
-    padding: 10px 12px;
+    grid-template-columns: repeat(4, 40px);
   }
 
   .content {
-    padding: 14px 12px 88px;
+    padding: 14px 14px 0;
   }
 }

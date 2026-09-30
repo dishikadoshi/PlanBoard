@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ACTIVITY_TYPE_LABELS } from '../../app/constants';
 import { normaliseEntry, filterActivity, groupByDay } from '../../utils/activityUtils';
 import ActivityItem from './ActivityItem';
+import Dropdown from '../common/Dropdown';
 
 /**
  * Activity & Audit Log page: search + type filter, entries grouped by day.
@@ -42,19 +43,15 @@ export default function ActivityLog({ activity }) {
           onChange={(event) => setQuery(event.target.value)}
         />
 
-        <select
-          aria-label="Filter by event type"
+        <Dropdown
+          ariaLabel="Filter by event type"
           value={type}
-          onChange={(event) => setType(event.target.value)}
-        >
-          <option value="">All types</option>
-
-          {Object.entries(ACTIVITY_TYPE_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+          options={[
+            { value: '', label: 'All types' },
+            ...Object.entries(ACTIVITY_TYPE_LABELS).map(([value, label]) => ({ value, label })),
+          ]}
+          onChange={setType}
+        />
       </div>
 
       {!shown.length && <p className="muted">No events match your search.</p>}

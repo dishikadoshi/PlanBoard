@@ -2,6 +2,7 @@ import { STATUSES } from '../../app/constants';
 import { blockers, moveBlockReason } from '../../utils/dependencyUtils';
 import { isOverdue } from '../../utils/taskUtils';
 import { fmtDate } from '../../utils/dateUtils';
+import Dropdown from '../common/Dropdown';
 
 /** Max number of cards that get a staggered entrance delay */
 const MAX_STAGGERED_CARDS = 8;
@@ -100,27 +101,17 @@ export default function TaskCard({ task, index, tasks, onOpen, onMove, onDragSta
       </div>
 
       {/* Row 4: keyboard / touch friendly alternative to drag & drop */}
-      <select
+      <Dropdown
         className="cstatus"
-        aria-label={`Status of ${task.title}`}
+        ariaLabel={`Status of ${task.title}`}
         value={task.status}
-        onChange={(event) => onMove(task.id, event.target.value)}
-        onClick={(event) => event.stopPropagation()}
-        draggable={false}
-        title={blockerCount ? 'Blocked: can only be Backlog or To Do until prerequisites are Done' : undefined}
-      >
-        {STATUSES.map((status) => {
-          // Blocked tasks cannot enter In Progress / Review / Done
-          const locked = status !== task.status && Boolean(moveBlockReason(task, status, tasks));
-
-          return (
-            <option key={status} value={status} disabled={locked}>
-              {status}
-              {locked ? ' 🔒' : ''}
-            </option>
-          );
-        })}
-      </select>
+        options={STATUSES}
+        onChange={(status) => onMove(task.id, status)}
+        // Blocked tasks cannot enter In Progress / Review / Done
+        isOptionDisabled={(status) =>
+          status !== task.status && Boolean(moveBlockReason(task, status, tasks))
+        }
+      />
     </article>
   );
 }

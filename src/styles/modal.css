@@ -154,7 +154,7 @@ legend {
   grid-column: 1 / -1;
 }
 
-.info select {
+.info .dd-btn {
   padding: 4px 8px;
 }
 

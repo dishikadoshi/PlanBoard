@@ -43,7 +43,7 @@
   padding: 10px 4px;
   border-bottom: 1px solid var(--line);
 
-  animation: rise 0.4s both;
+  animation: rise 0.4s backwards;
 }
 
 
@@ -157,8 +157,9 @@
 
 /* Dropdowns */
 
-.ftool select {
+.ftool .dd-btn {
   width: auto;
+  min-width: 130px;
 }
 
 
@@ -233,7 +234,7 @@
     flex-wrap: wrap;
   }
 
-  .ftool select {
+  .ftool .dd-btn {
     flex: 1;
     min-width: 0;
   }

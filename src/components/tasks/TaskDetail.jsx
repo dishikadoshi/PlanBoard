@@ -11,6 +11,7 @@ import {
 import { isOverdue } from '../../utils/taskUtils';
 import { fmtDate } from '../../utils/dateUtils';
 import Modal from '../common/Modal';
+import Dropdown from '../common/Dropdown';
 import { StatusPill } from '../common/Primitives';
 
 /** One related task: a clickable title (opens that task) plus its status pill. */
@@ -122,23 +123,16 @@ export default function TaskDetail({ task, tasks, onClose, onOpen, onMove, onEdi
             <label htmlFor="d-status">Status</label>
           </dt>
           <dd>
-            <select
+            <Dropdown
               id="d-status"
               value={task.status}
-              onChange={(event) => onMove(task.id, event.target.value)}
-            >
-              {STATUSES.map((status) => {
-                // Blocked tasks cannot enter In Progress / Review / Done
-                const locked = status !== task.status && Boolean(moveBlockReason(task, status, tasks));
-
-                return (
-                  <option key={status} value={status} disabled={locked}>
-                    {status}
-                    {locked ? ' 🔒' : ''}
-                  </option>
-                );
-              })}
-            </select>
+              options={STATUSES}
+              onChange={(status) => onMove(task.id, status)}
+              // Blocked tasks cannot enter In Progress / Review / Done
+              isOptionDisabled={(status) =>
+                status !== task.status && Boolean(moveBlockReason(task, status, tasks))
+              }
+            />
           </dd>
         </div>
 

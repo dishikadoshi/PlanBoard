@@ -1,3 +1,5 @@
+import Dropdown from './Dropdown';
+
 /**
  * Building blocks for forms: a labelled field with an inline error,
  * and a labelled dropdown built from a list of options.
@@ -18,29 +20,23 @@ export function Field({ label, error, children }) {
 }
 
 /**
- * Field wrapping a <select>.
+ * Field wrapping a dropdown.
  *
  * Props:
  *   options  – list of strings to choose from
- *   isOptionDisabled – optional: (option) => true to grey an option out
  *   value    – currently selected option
- *   onChange – standard change handler
+ *   onChange – standard change handler: it receives { target: { value } }
+ *   isOptionDisabled – optional: (option) => true to grey an option out
  */
 export function SelectField({ label, options, value, onChange, error, isOptionDisabled }) {
   return (
     <Field label={label} error={error}>
-      <select value={value} onChange={onChange}>
-        {options.map((option) => {
-          const disabled = Boolean(isOptionDisabled?.(option));
-
-          return (
-            <option key={option} value={option} disabled={disabled}>
-              {option}
-              {disabled ? ' 🔒' : ''}
-            </option>
-          );
-        })}
-      </select>
+      <Dropdown
+        value={value}
+        options={options}
+        onChange={(next) => onChange({ target: { value: next } })}
+        isOptionDisabled={isOptionDisabled}
+      />
     </Field>
   );
 }
