@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { STATUSES, PRIORITIES, TEAM } from '../../app/constants';
 import { blankForm, toForm, toTask, validateTask } from '../../utils/taskUtils';
+import { newId } from '../../utils/idUtils';
 import Modal from '../common/Modal';
 import { Field, SelectField } from '../common/FormFields';
 import DependencySelector from './DependencySelector';
@@ -32,7 +33,7 @@ export default function TaskForm({ task, tasks, onSave, onClose }) {
     event.preventDefault();
 
     // New tasks get a fresh id; edited tasks keep theirs
-    const id = task?.id || crypto.randomUUID();
+    const id = task?.id || newId();
 
     const validationErrors = validateTask(form, id, tasks);
     setErrors(validationErrors);
@@ -58,13 +59,11 @@ export default function TaskForm({ task, tasks, onSave, onClose }) {
           />
         </Field>
 
-        <Field label="Description *" error={errors.description}>
+        <Field label="Description">
           <textarea
             rows="2"
             value={form.description}
             onChange={updateField('description')}
-            aria-required="true"
-            aria-invalid={!!errors.description}
           />
         </Field>
 
@@ -98,12 +97,10 @@ export default function TaskForm({ task, tasks, onSave, onClose }) {
           </Field>
         </div>
 
-        <Field label="Tags * (comma separated)" error={errors.tags}>
+        <Field label="Tags (comma separated)">
           <input
             value={form.tags}
             onChange={updateField('tags')}
-            aria-required="true"
-            aria-invalid={!!errors.tags}
             placeholder="e.g. backend, security"
           />
         </Field>

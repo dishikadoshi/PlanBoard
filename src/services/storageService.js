@@ -10,13 +10,33 @@ import { wouldCycle } from '../utils/dependencyUtils';
 
 /* ---------- localStorage ---------- */
 
+/**
+ * Cleans tasks read from localStorage: anything malformed (edited by hand,
+ * written by an older version, half-saved) is dropped instead of crashing the app.
+ */
+const sanitiseSavedTasks = (savedTasks) => {
+  const validTasks = savedTasks.filter((task) => !findTaskProblem(task));
+  const knownIds = new Set(validTasks.map((task) => task.id));
+
+  return validTasks.map((task) => normaliseImportedTask(task, knownIds));
+};
+
 /** Returns { tasks, activity }, or null when nothing (valid) is stored yet. */
 export function loadProject() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
     if (saved && Array.isArray(saved.tasks)) {
-      return { tasks: saved.tasks, activity: saved.activity || [] };
+      const tasks = sanitiseSavedTasks(saved.tasks);
+
+      // Everything stored was unusable → start again with the demo data
+      if (saved.tasks.length && !tasks.length) return null;
+
+      const activity = Array.isArray(saved.activity)
+        ? saved.activity.filter((entry) => entry && typeof entry === 'object')
+        : [];
+
+      return { tasks, activity };
     }
   } catch {
     // Corrupted storage → fall back to the demo data
@@ -54,17 +74,31 @@ export const exportProject = (tasks) => {
 
 /* ---------- JSON import validation ---------- */
 
+// YYYY-MM-DD, the format <input type="date"> produces
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/** True for an empty value or a well-formed YYYY-MM-DD date. */
+const isOptionalDate = (value) =>
+  value === undefined || value === null || value === '' || (typeof value === 'string' && DATE_PATTERN.test(value));
+
 /**
- * Checks ONE imported task.
+ * Checks ONE task (from an imported file or from saved storage).
  * Returns an error message, or null when the task is valid.
  */
 const findTaskProblem = (task) => {
-  if (!task || typeof task.id !== 'string') return 'missing id';
+  if (!task || typeof task !== 'object') return 'not a task object';
+  if (typeof task.id !== 'string' || !task.id) return 'missing id';
   if (typeof task.title !== 'string' || !task.title.trim()) return 'missing title';
   if (!STATUSES.includes(task.status)) return 'invalid status';
   if (!PRIORITIES.includes(task.priority)) return 'invalid priority';
+  if (task.assignee !== undefined && !TEAM.includes(task.assignee)) return 'unknown assignee';
+  if (!isOptionalDate(task.start) || !isOptionalDate(task.due)) return 'dates must look like YYYY-MM-DD';
   if (task.start && task.due && task.due < task.start) return 'due date is before start date';
   if (!(Number(task.est ?? 0) >= 0)) return 'negative estimate';
+  if (task.tags !== undefined && !(Array.isArray(task.tags) && task.tags.every((tag) => typeof tag === 'string'))) {
+    return 'tags must be a list of text';
+  }
+  if (task.deps !== undefined && !Array.isArray(task.deps)) return 'deps must be a list of ids';
 
   return null;
 };
@@ -79,6 +113,9 @@ const normaliseImportedTask = (task, knownIds) => ({
   start: '',
   due: '',
   ...task,
+  description: typeof task.description === 'string' ? task.description : '',
+  start: task.start || '',
+  due: task.due || '',
   est: Number(task.est ?? 0),
   tags: Array.isArray(task.tags) ? task.tags : [],
   deps: [...new Set(Array.isArray(task.deps) ? task.deps : [])].filter(
@@ -113,6 +150,8 @@ export function validateImport(raw, existing = []) {
   const knownIds = new Set([...fileIds, ...existing.map((task) => task.id)]);
 
   // 3. Validate + clean every task, stopping at the first problem
+  if (fileIds.size !== list.length) return { error: 'The file contains duplicate task ids.' };
+
   const importedTasks = [];
 
   for (const [index, task] of list.entries()) {

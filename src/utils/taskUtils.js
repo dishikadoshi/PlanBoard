@@ -69,14 +69,6 @@ export function validateTask(form, id, tasks) {
     errors.title = 'Title is required.';
   }
 
-  if (!form.description.trim()) {
-    errors.description = 'Description is required.';
-  }
-
-  if (!parseTags(form.tags).length) {
-    errors.tags = 'Add at least one tag.';
-  }
-
   if (form.start && form.due && form.due < form.start) {
     errors.due = 'Due date cannot be before the start date.';
   }
