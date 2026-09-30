@@ -245,3 +245,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+@media (max-width: 600px) {
+
+  /* Phases sit closer together; the map itself scrolls sideways */
+
+  .mapinner {
+    gap: 70px;
+  }
+
+  .phase {
+    width: 210px;
+  }
+}

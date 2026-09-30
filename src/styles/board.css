@@ -324,6 +324,8 @@
   .filters {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+    padding: 12px;
   }
 
   .filters label {
@@ -336,18 +338,45 @@
   }
 
 
-  /* Columns sit side by side; swipe sideways to move between them */
+  /* Columns sit side by side; swipe sideways to move between them.
+     The board is as tall as its longest column, so the PAGE scrolls
+     vertically; there is no scroll-inside-scroll to get stuck in. */
 
   .board {
-    grid-template-columns: repeat(5, clamp(250px, 82%, 320px));
+    flex: none;
+
+    grid-template-columns: repeat(5, clamp(250px, 82%, 330px));
     grid-template-rows: auto;
+
+    padding-bottom: 10px;
+    overflow-x: auto;
     overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Long columns scroll inside themselves so the page stays short */
+  .col {
+    scroll-snap-align: start;
+  }
 
   .cards {
-    max-height: 70vh;
-    max-height: 70dvh;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .drag-hint {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Touch screens have no hover: stop cards staying "lifted" after a tap */
+
+@media (hover: none) {
+
+  .card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--line);
   }
 }

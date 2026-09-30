@@ -212,46 +212,242 @@
 }
 
 
-/* ---------- Responsive ---------- */
+/* ---------- Responsive (tablet + phone) ---------- */
 
 @media (max-width: 860px) {
 
-  /* Sidebar collapses into a top bar */
+  /* The page itself scrolls (with a sticky header) instead of every panel
+     scrolling on its own. `clip` keeps position: sticky working. */
 
   .shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+    overflow-x: clip;
   }
 
+
+  /* ----- Top bar ---------------------------------------------------------
+       row 1:  [ brand ............ + New Task  undo redo EXP IMP ]
+       row 2:  [ Dashboard | Kanban Board | Dependency Map | Activity ... ]
+     ----------------------------------------------------------------------- */
+
   .side {
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 8;
+
     height: auto;
+    min-width: 0;
 
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand tools"
+      "tabs  tabs";
     align-items: center;
+    gap: 8px 10px;
 
-    padding: 12px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 0;
+    background: var(--panel);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand {
+    grid-area: brand;
+    min-width: 0;
+    padding: 0;
+    font-size: 21px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+
+  /* Tools: New Task + undo / redo / export / import, all on one line */
+
+  .sideact {
+    grid-area: tools;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sideact .primary {
+    flex: none;
+    height: 36px;
+    padding: 0 14px;
+    white-space: nowrap;
+  }
+
+  .mini {
+    display: flex;
+    gap: 4px;
+  }
+
+  .mini button {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+
+  /* Page tabs: one horizontal row under the top bar, swipe sideways */
+
+  nav {
+    grid-area: tabs;
+
+    display: flex;
+    gap: 2px;
+
+    margin: 0 -14px;
+    padding: 0 14px;
+
+    border-top: 1px solid var(--line);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
   }
 
   .nav {
-    flex: none;
+    flex: 1 0 auto;
+    justify-content: center;
+
+    gap: 7px;
+    padding: 11px 12px;
+    white-space: nowrap;
+    border-radius: 0;
+    scroll-snap-align: center;
+  }
+
+  .nav:hover {
+    background: none;
+    transform: none;
   }
 
   .nav small {
     display: none;
   }
 
+  .nav i {
+    font-size: 16px;
+  }
+
+  /* Active tab is marked along the bottom edge */
+
+  .nav[aria-current=page] {
+    background: none;
+    box-shadow: inset 0 -3px var(--acc);
+  }
+
+
+  /* ----- Content flows in the page ----- */
+
+  .content {
+    display: block;
+    padding: 16px 14px calc(28px + env(safe-area-inset-bottom, 0px));
+    overflow: visible;
+  }
+
+  .view {
+    display: block;
+    animation: fade 0.3s both;
+  }
+
+  .vbody {
+    padding: 0;
+    margin-right: 0;
+    overflow: visible;
+  }
+
+  .vhead {
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .vhead h1 {
+    font-size: 22px;
+  }
+
+  /* "New Task" already lives in the top bar */
+
+  .vhead .primary {
+    display: none;
+  }
+
+  /* 16px inputs stop iOS from zooming the page when a field is focused */
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+
+/* ---------- Responsive (phones) ---------- */
+
+@media (max-width: 420px) {
+
+  .brand {
+    font-size: 18px;
+  }
+
+  /* "＋ New Task" shortens to "＋ New" so the whole top bar fits one line */
+
   .sideact {
-    margin: 0 0 0 auto;
-    display: flex;
+    gap: 6px;
+  }
+
+  .sideact .primary {
+    padding: 0 10px;
+  }
+
+  .sideact .primary .long {
+    display: none;
   }
 
   .mini {
-    grid-template-columns: repeat(4, 40px);
+    gap: 3px;
+  }
+
+  .mini button {
+    width: 30px;
+    height: 34px;
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+  }
+
+  .nav {
+    padding: 10px 11px;
   }
 
   .content {
-    padding: 14px 14px 0;
+    padding: 14px 12px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 340px) {
+
+  .brand {
+    font-size: 16px;
+  }
+
+  .mini button {
+    width: 27px;
   }
 }

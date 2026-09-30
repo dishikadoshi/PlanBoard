@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { VIEWS } from '../../app/constants';
 
 /**
@@ -28,6 +28,21 @@ export default function Sidebar({
   // The real <input type="file"> is hidden; the IMP button clicks it for us
   const fileInputRef = useRef(null);
 
+  // On phones the page tabs sit in a sideways-scrolling row: keep the open one in view
+  const navRef = useRef(null);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    const active = nav?.querySelector('[aria-current="page"]');
+
+    if (!nav || !active || nav.scrollWidth <= nav.clientWidth) return;
+
+    nav.scrollTo({
+      left: active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2,
+      behavior: 'smooth',
+    });
+  }, [view]);
+
   const handleFileChosen = (event) => {
     const file = event.target.files[0];
 
@@ -46,7 +61,7 @@ export default function Sidebar({
       </div>
 
       {/* Page links */}
-      <nav aria-label="Views">
+      <nav ref={navRef} aria-label="Views">
         {VIEWS.map(({ id, label, subtitle, icon }) => (
           <button
             key={id}
@@ -66,8 +81,8 @@ export default function Sidebar({
 
       {/* Actions */}
       <div className="sideact">
-        <button className="primary" onClick={onNewTask}>
-          ＋ New Task
+        <button className="primary" onClick={onNewTask} aria-label="New task">
+          ＋ New<span className="long"> Task</span>
         </button>
 
         <div className="mini">
