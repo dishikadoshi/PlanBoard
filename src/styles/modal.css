@@ -402,6 +402,46 @@ legend {
 @media (max-width: 860px) {
 
   .dcols {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+
+  .backdrop {
+    padding: 10px;
+  }
+
+  .modal {
+    max-height: 94vh;
+    max-height: 94dvh;
+    padding: 16px;
+  }
+
+  /* Key / value grid: two columns that may shrink */
+
+  .info {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .info dd {
+    overflow-wrap: anywhere;
+  }
+
+  /* Long task titles wrap instead of pushing the row wider */
+
+  .drow .dt {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .drow {
+    flex-wrap: wrap;
+  }
+
+  /* Full-width, easy-to-tap buttons */
+
+  .actions button {
+    flex: 1;
   }
 }

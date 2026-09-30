@@ -209,3 +209,32 @@
 .feed .ftool {
   flex: none;
 }
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+
+  /* The feed grows with the page instead of scrolling inside its card */
+
+  .feed {
+    flex: none;
+    margin-bottom: 0;
+  }
+
+  .days {
+    flex: none;
+    overflow: visible;
+    padding-right: 0;
+    margin-right: 0;
+  }
+
+  .fhead {
+    flex-wrap: wrap;
+  }
+
+  .ftool select {
+    flex: 1;
+    min-width: 0;
+  }
+}

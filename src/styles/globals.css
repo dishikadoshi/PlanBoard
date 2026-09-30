@@ -409,14 +409,17 @@ select option {
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 860px) {
+@media (max-width: 600px) {
 
-  /* Navigation becomes a horizontal, scrollable strip */
+  /* Tighter panels; long subtitles wrap instead of pushing the page wider */
 
-  nav {
-    display: flex;
-    overflow-x: auto;
-    order: 3;
-    width: 100%;
+  .panel {
+    padding: 14px;
+  }
+
+  .panel h2 small {
+    display: block;
+    margin-left: 0;
+    white-space: normal;
   }
 }
