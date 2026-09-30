@@ -1,5 +1,5 @@
 import { STATUSES } from '../../app/constants';
-import { blockers } from '../../utils/dependencyUtils';
+import { blockers, moveBlockReason } from '../../utils/dependencyUtils';
 import { isOverdue } from '../../utils/taskUtils';
 import { fmtDate } from '../../utils/dateUtils';
 
@@ -24,8 +24,9 @@ const STAGGER_MS = 40;
  *   tasks  – every task (needed to work out what is blocking this one)
  *   onOpen – open the details popup
  *   onMove – change the task's status
+ *   onDragStart, onDragEnd – tell the board when a drag begins / ends
  */
-export default function TaskCard({ task, index, tasks, onOpen, onMove }) {
+export default function TaskCard({ task, index, tasks, onOpen, onMove, onDragStart, onDragEnd }) {
   const waitingOn = blockers(task, tasks);
   const blockerCount = waitingOn.length;
 
@@ -57,7 +58,11 @@ export default function TaskCard({ task, index, tasks, onOpen, onMove }) {
       draggable
       onClick={() => onOpen(task)}
       onKeyDown={handleKeyDown}
-      onDragStart={(event) => event.dataTransfer.setData('text/plain', task.id)}
+      onDragStart={(event) => {
+        event.dataTransfer.setData('text/plain', task.id);
+        onDragStart?.(task.id);
+      }}
+      onDragEnd={onDragEnd}
     >
       {/* Row 1: title + priority */}
       <div className="ctop">
@@ -102,10 +107,19 @@ export default function TaskCard({ task, index, tasks, onOpen, onMove }) {
         onChange={(event) => onMove(task.id, event.target.value)}
         onClick={(event) => event.stopPropagation()}
         draggable={false}
+        title={blockerCount ? 'Blocked: can only be Backlog or To Do until prerequisites are Done' : undefined}
       >
-        {STATUSES.map((status) => (
-          <option key={status}>{status}</option>
-        ))}
+        {STATUSES.map((status) => {
+          // Blocked tasks cannot enter In Progress / Review / Done
+          const locked = status !== task.status && Boolean(moveBlockReason(task, status, tasks));
+
+          return (
+            <option key={status} value={status} disabled={locked}>
+              {status}
+              {locked ? ' 🔒' : ''}
+            </option>
+          );
+        })}
       </select>
     </article>
   );

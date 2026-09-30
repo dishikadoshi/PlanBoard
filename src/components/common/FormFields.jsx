@@ -22,16 +22,24 @@ export function Field({ label, error, children }) {
  *
  * Props:
  *   options  – list of strings to choose from
+ *   isOptionDisabled – optional: (option) => true to grey an option out
  *   value    – currently selected option
  *   onChange – standard change handler
  */
-export function SelectField({ label, options, value, onChange, error }) {
+export function SelectField({ label, options, value, onChange, error, isOptionDisabled }) {
   return (
     <Field label={label} error={error}>
       <select value={value} onChange={onChange}>
-        {options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
+        {options.map((option) => {
+          const disabled = Boolean(isOptionDisabled?.(option));
+
+          return (
+            <option key={option} value={option} disabled={disabled}>
+              {option}
+              {disabled ? ' 🔒' : ''}
+            </option>
+          );
+        })}
       </select>
     </Field>
   );

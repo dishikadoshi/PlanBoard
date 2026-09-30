@@ -7,6 +7,9 @@
    ========================================================= */
 
 
+import { STARTED_STATUSES } from '../app/constants';
+
+
 /* ---------- Lookup ---------- */
 
 /** id → task, for fast lookups. */
@@ -98,6 +101,40 @@ export const blockers = (task, tasks) =>
     : directPrerequisites(task, tasks).filter((prereq) => prereq.status !== 'Done');
 
 export const isBlocked = (task, tasks) => blockers(task, tasks).length > 0;
+
+
+/* ---------- Move rules ---------- */
+
+/**
+ * Why `task` may not be moved to `status`, or '' when the move is fine.
+ * A task with unfinished prerequisites cannot enter In Progress, Review or Done;
+ * it can still go back to Backlog / To Do.
+ */
+export const moveBlockReason = (task, status, tasks) => {
+  if (!STARTED_STATUSES.includes(status)) return '';
+
+  const waiting = directPrerequisites(task, tasks).filter((prereq) => prereq.status !== 'Done');
+  if (!waiting.length) return '';
+
+  const names = waiting.map((prereq) => `“${prereq.title}”`).join(', ');
+
+  return `“${task.title}” is blocked. Finish ${names} first — until then it can only be in Backlog or To Do.`;
+};
+
+/**
+ * Same rule for saving a whole task (form or reducer).
+ * A save that changes neither status nor prerequisites is always allowed,
+ * so editing e.g. the title of a task that became blocked later still works.
+ */
+export const saveBlockReason = (existing, task, tasks) => {
+  const unchanged =
+    existing &&
+    existing.status === task.status &&
+    existing.deps.length === task.deps.length &&
+    existing.deps.every((id) => task.deps.includes(id));
+
+  return unchanged ? '' : moveBlockReason(task, task.status, tasks);
+};
 
 
 /* ---------- Integrity rules ---------- */

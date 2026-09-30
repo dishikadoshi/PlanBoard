@@ -1,4 +1,5 @@
 import TaskCard from '../tasks/TaskCard';
+import { moveBlockReason } from '../../utils/dependencyUtils';
 
 /**
  * One status column. Also the drop target for dragged cards.
@@ -10,6 +11,8 @@ import TaskCard from '../tasks/TaskCard';
  *   allTasks – every task (cards need them to work out blockers)
  *   isOver   – true while a card is dragged over this column
  *   setOver  – tells the board which column is being hovered
+ *   draggedTask – the task currently being dragged (or null)
+ *   setDraggedId – tells the board which task is being dragged
  *   onOpen, onMove – forwarded to each card
  */
 export default function KanbanColumn({
@@ -19,12 +22,21 @@ export default function KanbanColumn({
   allTasks,
   isOver,
   setOver,
+  draggedTask,
+  setDraggedId,
   onOpen,
   onMove,
 }) {
+  // A blocked card cannot be dropped into In Progress / Review / Done
+  const dropIsDenied =
+    Boolean(draggedTask) &&
+    draggedTask.status !== status &&
+    Boolean(moveBlockReason(draggedTask, status, allTasks));
+
   // preventDefault() is what allows this element to accept a drop
   const handleDragOver = (event) => {
     event.preventDefault();
+    event.dataTransfer.dropEffect = dropIsDenied ? 'none' : 'move'; // "no drop" cursor
     setOver(status);
   };
 
@@ -32,12 +44,21 @@ export default function KanbanColumn({
   const handleDrop = (event) => {
     event.preventDefault();
     setOver(null);
+    setDraggedId(null);
+
+    if (dropIsDenied) return;
+
     onMove(event.dataTransfer.getData('text/plain'), status);
+  };
+
+  const stopDragging = () => {
+    setDraggedId(null);
+    setOver(null);
   };
 
   return (
     <section
-      className={`col ${isOver ? 'over' : ''}`}
+      className={`col ${isOver ? (dropIsDenied ? 'denied' : 'over') : ''}`}
       aria-label={`${status} column`}
       onDragOver={handleDragOver}
       onDragLeave={() => setOver(null)}
@@ -58,6 +79,8 @@ export default function KanbanColumn({
             tasks={allTasks}
             onOpen={onOpen}
             onMove={onMove}
+            onDragStart={setDraggedId}
+            onDragEnd={stopDragging}
           />
         ))}
 

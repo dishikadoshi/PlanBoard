@@ -6,6 +6,7 @@ import {
   indirectPrerequisites,
   dependentsOf,
   indirectDependents,
+  moveBlockReason,
 } from '../../utils/dependencyUtils';
 import { isOverdue } from '../../utils/taskUtils';
 import { fmtDate } from '../../utils/dateUtils';
@@ -126,9 +127,17 @@ export default function TaskDetail({ task, tasks, onClose, onOpen, onMove, onEdi
               value={task.status}
               onChange={(event) => onMove(task.id, event.target.value)}
             >
-              {STATUSES.map((status) => (
-                <option key={status}>{status}</option>
-              ))}
+              {STATUSES.map((status) => {
+                // Blocked tasks cannot enter In Progress / Review / Done
+                const locked = status !== task.status && Boolean(moveBlockReason(task, status, tasks));
+
+                return (
+                  <option key={status} value={status} disabled={locked}>
+                    {status}
+                    {locked ? ' 🔒' : ''}
+                  </option>
+                );
+              })}
             </select>
           </dd>
         </div>

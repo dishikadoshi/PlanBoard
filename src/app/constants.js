@@ -13,6 +13,10 @@ export const STATUSES = ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'];
 // Lowest → highest urgency
 export const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
 
+// A blocked task may not be moved into these columns: work cannot start
+// (or finish) until every prerequisite is Done. Backlog / To Do stay allowed.
+export const STARTED_STATUSES = ['In Progress', 'Review', 'Done'];
+
 // People a task can be assigned to
 export const TEAM = ['Aarav', 'Meera', 'Kabir'];
 

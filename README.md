@@ -22,10 +22,12 @@ npm run build
 - One `commit()` path records history + activity, giving undo/redo and the activity log for free.
 - Blocked and overdue are *derived* on render, never stored, so metrics can't go stale.
 - Deleting a task strips its id from every other task's prerequisites.
+- A blocked task cannot enter In Progress, Review or Done (drag & drop, status dropdowns and the form all enforce it, and the reducer re-checks). It can still sit in Backlog / To Do. Blocked stays a derived state, so if a prerequisite is reopened later, dependents already in progress are simply flagged as blocked again.
 - Drag-and-drop uses native HTML5 events; every card also has a labelled status `<select>` as the keyboard alternative.
 - Chart is inline SVG; animations are CSS-only and disabled under `prefers-reduced-motion`.
 - The active page lives in the URL hash (`#/board`, `#/map`…) and uses `history.pushState`, so the browser Back/Forward buttons step through visited pages.
 - Dependency-map wires are routed orthogonally through the gaps between phases; links that skip a phase run along a lane beneath the map so they never pass behind a card.
+- Responsive: below 860px the sidebar becomes a compact top bar (four equal tabs on phones), the page scrolls normally, filters and stats reflow into two columns, the board and dependency map scroll sideways, and "New Task" becomes a floating button. Grid columns use `minmax(0, 1fr)` so wide content can never stretch a page past the screen.
 - Bonus: circular-dependency detection, undo/redo (buttons + Ctrl/Cmd+Z / Y), JSON import/export with validation.
 
 ## Code style
@@ -34,7 +36,7 @@ npm run build
 - CSS: one rule per property line, grouped by feature with a comment above each rule, responsive rules collected at the bottom of each file, no duplicate or dead selectors.
 
 ## AI tools used
-Claude (Anthropic) generated the initial code; reviewed and adapted by the author.
+Claude (Anthropic) generated the initial code; reviewed and adapted by Dishika Doshi.
 
 ## Known limitations
 - Undo history is in-memory (cleared on refresh); activity is persisted.

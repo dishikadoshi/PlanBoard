@@ -6,7 +6,7 @@
 
 import { TEAM, NO_FILTERS } from '../app/constants';
 import { dayOffset } from './dateUtils';
-import { wouldCycle } from './dependencyUtils';
+import { wouldCycle, saveBlockReason } from './dependencyUtils';
 
 
 /* ---------- Derived state ---------- */
@@ -82,6 +82,16 @@ export function validateTask(form, id, tasks) {
   } else if (wouldCycle(tasks, id, form.deps)) {
     errors.deps = 'Those links would create a circular dependency.';
   }
+
+  // A task with unfinished prerequisites cannot be started or finished
+  const existing = tasks.find((task) => task.id === id);
+  const blockReason = saveBlockReason(
+    existing,
+    { id, title: form.title.trim() || 'This task', status: form.status, deps: form.deps },
+    tasks
+  );
+
+  if (blockReason) errors.status = blockReason;
 
   return errors;
 }

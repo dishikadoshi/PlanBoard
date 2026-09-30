@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { STATUSES, NO_FILTERS } from '../../app/constants';
 import { filterTasks, allTags, isFiltering } from '../../utils/taskUtils';
+import { moveBlockReason } from '../../utils/dependencyUtils';
 import { EmptyState } from '../common/Primitives';
 import BoardFilters from './BoardFilters';
 import KanbanColumn from './KanbanColumn';
@@ -19,8 +20,18 @@ export default function KanbanBoard({ tasks, filters, setFilters, onOpen, onMove
   // Name of the column a card is currently being dragged over
   const [dragOverStatus, setDragOverStatus] = useState(null);
 
+  // Id of the card being dragged (null when nothing is)
+  const [draggedId, setDraggedId] = useState(null);
+
   const visibleTasks = useMemo(() => filterTasks(tasks, filters), [tasks, filters]);
   const tags = useMemo(() => allTags(tasks), [tasks]);
+
+  // While a blocked card hovers a column it may not enter, explain why
+  const draggedTask = tasks.find((task) => task.id === draggedId) || null;
+  const dragHint =
+    draggedTask && dragOverStatus && draggedTask.status !== dragOverStatus
+      ? moveBlockReason(draggedTask, dragOverStatus, tasks)
+      : '';
 
   const projectIsEmpty = tasks.length === 0;
   const nothingMatchesFilters = tasks.length > 0 && visibleTasks.length === 0;
@@ -47,6 +58,13 @@ export default function KanbanBoard({ tasks, filters, setFilters, onOpen, onMove
         </EmptyState>
       )}
 
+      {/* Floats over the page so it never shifts the board mid-drag */}
+      {dragHint && (
+        <p className="drag-hint" role="status">
+          🔒 {dragHint}
+        </p>
+      )}
+
       <div className="board">
         {STATUSES.map((status, index) => (
           <KanbanColumn
@@ -57,6 +75,8 @@ export default function KanbanBoard({ tasks, filters, setFilters, onOpen, onMove
             allTasks={tasks}
             isOver={dragOverStatus === status}
             setOver={setDragOverStatus}
+            draggedTask={draggedTask}
+            setDraggedId={setDraggedId}
             onOpen={onOpen}
             onMove={onMove}
           />

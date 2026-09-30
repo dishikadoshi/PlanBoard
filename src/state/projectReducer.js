@@ -13,7 +13,7 @@
    activity entry AND the undo snapshot in one place.
    ========================================================= */
 
-import { wouldCycle, withoutTask } from '../utils/dependencyUtils';
+import { wouldCycle, withoutTask, moveBlockReason, saveBlockReason } from '../utils/dependencyUtils';
 import { createSeedTasks } from '../data/seedData';
 import { MAX_ACTIVITY_ENTRIES, MAX_UNDO_STEPS } from '../app/constants';
 import { ACTION_TYPES } from './projectActions';
@@ -112,12 +112,18 @@ function handleSave(state, { task: submitted }) {
   const task = { ...submitted, deps };
   const existing = state.tasks.find((other) => other.id === task.id);
 
+  // Safety net: a blocked task cannot be started or finished
+  if (saveBlockReason(existing, task, state.tasks)) return state;
+
   return existing ? updateTask(state, existing, task) : createTask(state, task);
 }
 
 function handleMove(state, { id, status }) {
   const task = state.tasks.find((other) => other.id === id);
   if (!task || task.status === status) return state;
+
+  // Blocked tasks cannot enter In Progress / Review / Done
+  if (moveBlockReason(task, status, state.tasks)) return state;
 
   const tasks = state.tasks.map((other) =>
     other.id === id ? { ...other, status } : other

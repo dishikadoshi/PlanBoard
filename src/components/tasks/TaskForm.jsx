@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { STATUSES, PRIORITIES, TEAM } from '../../app/constants';
 import { blankForm, toForm, toTask, validateTask } from '../../utils/taskUtils';
 import { newId } from '../../utils/idUtils';
+import { saveBlockReason } from '../../utils/dependencyUtils';
 import Modal from '../common/Modal';
 import { Field, SelectField } from '../common/FormFields';
 import DependencySelector from './DependencySelector';
@@ -28,6 +29,16 @@ export default function TaskForm({ task, tasks, onSave, onClose }) {
   // Builds a change handler that updates just one form field
   const updateField = (key) => (event) =>
     setForm({ ...form, [key]: event.target.value });
+
+  // Is the task allowed to take this status with the prerequisites ticked right now?
+  const statusIsLocked = (status) =>
+    Boolean(
+      saveBlockReason(
+        task,
+        { id: task?.id, title: form.title, status, deps: form.deps },
+        tasks
+      )
+    );
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,7 +82,14 @@ export default function TaskForm({ task, tasks, onSave, onClose }) {
         <div className="grid">
           <SelectField label="Assignee" options={TEAM} value={form.assignee} onChange={updateField('assignee')} />
           <SelectField label="Priority" options={PRIORITIES} value={form.priority} onChange={updateField('priority')} />
-          <SelectField label="Status" options={STATUSES} value={form.status} onChange={updateField('status')} />
+          <SelectField
+            label="Status"
+            options={STATUSES}
+            value={form.status}
+            onChange={updateField('status')}
+            error={errors.status}
+            isOptionDisabled={statusIsLocked}
+          />
 
           <Field label="Estimated hours" error={errors.est}>
             <input
