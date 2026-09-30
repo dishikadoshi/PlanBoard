@@ -38,7 +38,3 @@ npm run build
 ## AI tools used
 Claude (Anthropic) generated the initial code; reviewed and adapted by Dishika Doshi.
 
-## Known limitations
-- Undo history is in-memory (cleared on refresh); activity is persisted.
-- Native drag-and-drop does not work on touch screens — use the status dropdown on mobile.
-- Single user, no sync.
